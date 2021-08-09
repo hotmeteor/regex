@@ -15,6 +15,8 @@ composer require hotmeteor/regex
 
 Regex comes with a set of common regex patterns that are ready to use. These patterns can be used to either **replace** or **match** against values. Every pattern is both case-insensitive and able to interpret unicode characters, and should support all languages.
 
+Additionally, beyond the methods below both the underlying `match` and `replace` methods are exposed to pass in custom patterns.
+
 ### Match
 
 Match methods return true or false depending on if the subject value contains anything but the expected pattern. 
