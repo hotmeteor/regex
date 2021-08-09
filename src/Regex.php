@@ -159,6 +159,8 @@ class Regex
     }
 
     /**
+     * Wrap a replace pattern with boundaries.
+     *
      * @param $pattern
      * @return string
      */
@@ -168,6 +170,8 @@ class Regex
     }
 
     /**
+     * Wrap a match pattern with boundaries.
+     *
      * @param $pattern
      * @param  bool  $allowWhitespace
      * @return string
