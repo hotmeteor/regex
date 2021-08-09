@@ -2,7 +2,7 @@
 
 A set of ready-made regex helper methods for use in your Laravel application.
 
-![Latest Version on Packagist](https://img.shields.io/packagist/vpre/hotmeteor/regex.svg?style=flat-square)](https://packagist.org/packages/hotmeteor/regex)
+[![Latest Version on Packagist](https://img.shields.io/packagist/vpre/hotmeteor/regex.svg?style=flat-square)](https://packagist.org/packages/hotmeteor/regex)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/hotmeteor/regex)
 
 ## Installation
