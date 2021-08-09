@@ -37,8 +37,8 @@ class RegexTest extends TestCase
                 'AbČdë12345.-_',
             ],
 
-            'replace non numeric' => [
-                'numeric',
+            'replace non integer' => [
+                'integer',
                 '12345',
             ],
 
@@ -153,30 +153,44 @@ class RegexTest extends TestCase
                 $invalid,
             ],
 
-            'match numeric' => [
-                'isNumeric',
+            'match integer' => [
+                'isInteger',
                 '12345',
                 $disallowWhitespace,
                 $valid,
             ],
 
-            'match numeric allow whitespace' => [
-                'isNumeric',
+            'match integer allow whitespace' => [
+                'isInteger',
                 '1234 5',
                 $allowWhitespace,
                 $valid,
             ],
 
-            'match numeric disallow whitespace' => [
-                'isNumeric',
+            'match integer disallow whitespace' => [
+                'isInteger',
                 '1234 5',
                 $disallowWhitespace,
                 $invalid,
             ],
 
+            'match non integer' => [
+                'isInteger',
+                '12345A',
+                $disallowWhitespace,
+                $invalid,
+            ],
+
+            'match numeric' => [
+                'isNumeric',
+                '-11.3456',
+                $disallowWhitespace,
+                $valid,
+            ],
+
             'match non numeric' => [
                 'isNumeric',
-                '12345A',
+                '10^4',
                 $disallowWhitespace,
                 $invalid,
             ],

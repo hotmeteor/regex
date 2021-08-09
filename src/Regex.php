@@ -11,7 +11,8 @@ class Regex
     const PATTERN_ALPHA = '\pL\pM';
     const PATTERN_ALPHANUMERIC = '\pL\pM\pN';
     const PATTERN_ALPHADASH = '\pL\pM\pN._-';
-    const PATTERN_NUMERIC = '\pN';
+    const PATTERN_INTEGER = '\pN';
+    const PATTERN_NUMERIC = '-?\d*(\.\d+)?';
 
     /**
      * Filter to only alpha.
@@ -47,6 +48,18 @@ class Regex
     public static function alphanumeric($subject, $replace = '')
     {
         return static::replace($subject, self::PATTERN_ALPHANUMERIC, $replace);
+    }
+
+    /**
+     * Filter to only integers.
+     *
+     * @param $subject
+     * @param  string  $replace
+     * @return array|string|string[]|null
+     */
+    public static function integer($subject, $replace = '')
+    {
+        return static::replace($subject, self::PATTERN_INTEGER, $replace);
     }
 
     /**
@@ -115,9 +128,21 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return bool
      */
+    public static function isInteger($subject, bool $allowWhitespace = false)
+    {
+        return static::match($subject, self::PATTERN_INTEGER, $allowWhitespace);
+    }
+
+    /**
+     * Check if it's only numeric.
+     *
+     * @param $subject
+     * @param  bool  $allowWhitespace
+     * @return bool
+     */
     public static function isNumeric($subject, bool $allowWhitespace = false)
     {
-        return static::match($subject, self::PATTERN_NUMERIC, $allowWhitespace);
+        return static::match($subject, self::PATTERN_NUMERIC);
     }
 
     /**
