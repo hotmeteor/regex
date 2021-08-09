@@ -11,7 +11,7 @@ class Regex
     const PATTERN_ALPHA = '\pL\pM';
     const PATTERN_ALPHANUMERIC = '\pL\pM\pN';
     const PATTERN_ALPHADASH = '\pL\pM\pN._-';
-    const PATTERN_INTEGER = '\pN';
+    const PATTERN_DIGITS = '0-9';
     const PATTERN_NUMERIC = '-?\d*(\.\d+)?';
 
     /**
@@ -57,9 +57,9 @@ class Regex
      * @param  string  $replace
      * @return array|string|string[]|null
      */
-    public static function integer($subject, $replace = '')
+    public static function digits($subject, $replace = '')
     {
-        return static::replace($subject, self::PATTERN_INTEGER, $replace);
+        return static::replace($subject, self::PATTERN_DIGITS, $replace);
     }
 
     /**
@@ -128,9 +128,9 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return bool
      */
-    public static function isInteger($subject, bool $allowWhitespace = false)
+    public static function isDigits($subject, bool $allowWhitespace = false)
     {
-        return static::match($subject, self::PATTERN_INTEGER, $allowWhitespace);
+        return static::match($subject, self::PATTERN_DIGITS, $allowWhitespace);
     }
 
     /**

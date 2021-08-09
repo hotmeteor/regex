@@ -46,7 +46,7 @@ Checks if the value contains anything but letters, numbers, and `.-_`.
 ***
 
 ```php
-Regex::isInteger($subject, $allowWhitespace = false)
+Regex::isDigits($subject, $allowWhitespace = false)
 ``` 
 Checks if the value contains anything but integers.
 
@@ -87,7 +87,7 @@ Replaces all characters in the subject except letters, numbers, and `.-_`.
 ***
 
 ```php
-Regex::integer($subject, $replace = '')
+Regex::digits($subject, $replace = '')
 ``` 
 Replaces all characters in the subject except integers.
 
