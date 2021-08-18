@@ -13,6 +13,7 @@ class Regex
     const PATTERN_ALPHADASH = '\pL\pM\pN._-';
     const PATTERN_DIGITS = '0-9';
     const PATTERN_NUMERIC = '-?\d*(\.\d+)?';
+    const PATTERN_UUID = '\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}';
 
     /**
      * Filter to only alpha.
@@ -21,7 +22,7 @@ class Regex
      * @param  string  $replace
      * @return array|string|string[]|null
      */
-    public static function alpha($subject, $replace = '')
+    public static function alpha($subject, string $replace = '')
     {
         return static::replace($subject, self::PATTERN_ALPHA, $replace);
     }
@@ -33,7 +34,7 @@ class Regex
      * @param  string  $replace
      * @return array|string|string[]|null
      */
-    public static function alphadash($subject, $replace = '')
+    public static function alphadash($subject, string $replace = '')
     {
         return static::replace($subject, self::PATTERN_ALPHADASH, $replace);
     }
@@ -45,7 +46,7 @@ class Regex
      * @param  string  $replace
      * @return array|string|string[]|null
      */
-    public static function alphanumeric($subject, $replace = '')
+    public static function alphanumeric($subject, string $replace = '')
     {
         return static::replace($subject, self::PATTERN_ALPHANUMERIC, $replace);
     }
@@ -57,7 +58,7 @@ class Regex
      * @param  string  $replace
      * @return array|string|string[]|null
      */
-    public static function digits($subject, $replace = '')
+    public static function digits($subject, string $replace = '')
     {
         return static::replace($subject, self::PATTERN_DIGITS, $replace);
     }
@@ -69,20 +70,33 @@ class Regex
      * @param  string  $replace
      * @return array|string|string[]|null
      */
-    public static function numeric($subject, $replace = '')
+    public static function numeric($subject, string $replace = '')
     {
         return static::replace($subject, self::PATTERN_NUMERIC, $replace);
     }
 
     /**
+     * Filter to only UUID format.
+     *
      * @param $subject
-     * @param $pattern
-     * @param  string  $replacement
      * @return array|string|string[]|null
      */
-    public static function replace($subject, $pattern, $replacement = '')
+    public static function uuid($subject)
     {
-        return preg_replace(self::wrapReplacePattern($pattern), $replacement, $subject);
+        $subject = static::alphanumeric($subject);
+
+        return preg_replace("/(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/i", '$1-$2-$3-$4-$5', $subject);
+    }
+
+    /**
+     * @param $subject
+     * @param $pattern
+     * @param  string  $replace
+     * @return array|string|string[]|null
+     */
+    public static function replace($subject, $pattern, string $replace = '', $prefix = '/[^', $suffix = ']+/u')
+    {
+        return preg_replace(self::wrapReplacePattern($pattern, $prefix, $suffix), $replace, $subject);
     }
 
     /**
@@ -92,7 +106,7 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return bool
      */
-    public static function isAlpha($subject, bool $allowWhitespace = false)
+    public static function isAlpha($subject, bool $allowWhitespace = false): bool
     {
         return static::match($subject, self::PATTERN_ALPHA, $allowWhitespace);
     }
@@ -104,7 +118,7 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return bool
      */
-    public static function isAlphadash($subject, bool $allowWhitespace = false)
+    public static function isAlphadash($subject, bool $allowWhitespace = false): bool
     {
         return static::match($subject, self::PATTERN_ALPHADASH, $allowWhitespace);
     }
@@ -116,7 +130,7 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return bool
      */
-    public static function isAlphanumeric($subject, bool $allowWhitespace = false)
+    public static function isAlphanumeric($subject, bool $allowWhitespace = false): bool
     {
         return static::match($subject, self::PATTERN_ALPHANUMERIC, $allowWhitespace);
     }
@@ -128,7 +142,7 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return bool
      */
-    public static function isDigits($subject, bool $allowWhitespace = false)
+    public static function isDigits($subject, bool $allowWhitespace = false): bool
     {
         return static::match($subject, self::PATTERN_DIGITS, $allowWhitespace);
     }
@@ -137,12 +151,22 @@ class Regex
      * Check if it's only numeric.
      *
      * @param $subject
-     * @param  bool  $allowWhitespace
      * @return bool
      */
-    public static function isNumeric($subject, bool $allowWhitespace = false)
+    public static function isNumeric($subject): bool
     {
         return static::match($subject, self::PATTERN_NUMERIC);
+    }
+
+    /**
+     * Check if it's only numeric.
+     *
+     * @param $subject
+     * @return bool
+     */
+    public static function isUuid($subject): bool
+    {
+        return static::match($subject, '/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iD', false, '', '');
     }
 
     /**
@@ -151,9 +175,9 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return bool
      */
-    public static function match($subject, $pattern, bool $allowWhitespace = false): bool
+    public static function match($subject, $pattern, bool $allowWhitespace = false, $prefix = '/^[', $suffix = ']+$/u'): bool
     {
-        $result = preg_match(self::wrapMatchPattern($pattern, $allowWhitespace), $subject);
+        $result = preg_match(self::wrapMatchPattern($pattern, $allowWhitespace, $prefix, $suffix), $subject);
 
         return is_numeric($result) ? $result === 1 : $result;
     }
@@ -164,9 +188,9 @@ class Regex
      * @param $pattern
      * @return string
      */
-    protected static function wrapReplacePattern($pattern): string
+    protected static function wrapReplacePattern($pattern, $prefix, $suffix): string
     {
-        return implode('', ['/[^', $pattern, ']+/u']);
+        return implode('', [$prefix, $pattern, $suffix]);
     }
 
     /**
@@ -176,8 +200,8 @@ class Regex
      * @param  bool  $allowWhitespace
      * @return string
      */
-    protected static function wrapMatchPattern($pattern, bool $allowWhitespace = false): string
+    protected static function wrapMatchPattern($pattern, bool $allowWhitespace, $prefix, $suffix): string
     {
-        return implode('', ['/^[', $allowWhitespace ? '\s' : '', $pattern, ']+$/u']);
+        return implode('', [$prefix, $allowWhitespace ? '\s' : '', $pattern, $suffix]);
     }
 }

@@ -23,6 +23,7 @@ Match methods return true or false depending on if the subject value contains an
 You may optional allow whitespace by passing `true` as a second parameter.
 
 #### Methods
+
 ```php
 Regex::isAlpha($subject, $allowWhitespace = false)
 ``` 
@@ -56,6 +57,12 @@ Regex::isNumeric($subject)
 ``` 
 Checks if the value contains anything but numeric values, including decimals and negative numbers. Does not allow for whitespace.
 
+***
+
+```php
+Regex::isUuid($subject)
+``` 
+Checks if the value is a UUID. Does not allow for whitespace.
 
 ### Replace
 
@@ -96,4 +103,11 @@ Replaces all characters in the subject except integers.
 Regex::numeric($subject, $replace = '')
 ``` 
 Replaces all characters in the subject except numeric values, including decimals and negative numbers.
+ 
+***
+
+```php
+Regex::uuid($subject)
+``` 
+Replaces all characters in the subject to form it into a UUID. Does not accept a replacement value.
  

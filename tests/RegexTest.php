@@ -50,6 +50,19 @@ class RegexTest extends TestCase
         ];
     }
 
+    public function test_uuid_replace()
+    {
+        $expected = '440526d4-04bd-43c4-9ac5-55e15c835d0d';
+
+        $result = Regex::uuid('440526d4-04bd-43c4-9ac5-55e15c835d0d');
+
+        $this->assertSame($expected, $result);
+
+        $result = Regex::uuid('4405  26d4-04bd43c4-9ac5 - 55e15c  835d0d ');
+
+        $this->assertSame($expected, $result);
+    }
+
     /**
      * @dataProvider providesMatchSubjects
      */
@@ -201,5 +214,18 @@ class RegexTest extends TestCase
             ],
 
         ];
+    }
+
+    public function test_uuid_match()
+    {
+        $expected = '440526d4-04bd-43c4-9ac5-55e15c835d0d';
+
+        $result = Regex::isUuid('440526d4-04bd-43c4-9ac5-55e15c835d0d');
+
+        $this->assertTrue($result);
+
+        $result = Regex::isUuid('4405  26d4-04bd43c4-9ac5 - 55e15c  835d0d ');
+
+        $this->assertFalse($result);
     }
 }
