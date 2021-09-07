@@ -64,6 +64,21 @@ Regex::isUuid($subject)
 ``` 
 Checks if the value is a UUID. Does not allow for whitespace.
 
+***
+
+```php
+Regex::isIp($subject) // or
+Regex::isIpv4($subject)
+``` 
+Checks if the value is an IPv4 address. Does not allow for whitespace.
+
+***
+
+```php
+Regex::isIpv6($subject)
+``` 
+Checks if the value is an IPv6 address. Does not allow for whitespace.
+
 ### Replace
 
 Replace methods replace anything in the subject value that doesn't match the pattern with the provided replacement.
@@ -110,4 +125,17 @@ Replaces all characters in the subject except numeric values, including decimals
 Regex::uuid($subject)
 ``` 
 Replaces all characters in the subject to form it into a UUID. Does not accept a replacement value.
- 
+
+***
+
+```php
+Regex::ip($subject) // or
+Regex::ipv4($subject)
+``` 
+Replaces all characters in the subject to form it into an IPv4 address. Does not accept a replacement value.
+
+```php
+Regex::ipv6($subject)
+``` 
+Replaces all characters in the subject to form it into an IPv6 address. Does not accept a replacement value.
+  
