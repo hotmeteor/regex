@@ -13,7 +13,6 @@ class Regex
     const PATTERN_ALPHADASH = '\pL\pM\pN._-';
     const PATTERN_DIGITS = '0-9';
     const PATTERN_NUMERIC = '-?\d*(\.\d+)?';
-    const PATTERN_UUID = '\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}';
 
     /**
      * Filter to only alpha.
@@ -89,12 +88,71 @@ class Regex
     }
 
     /**
+     * Filter to only IPv4 format.
+     *
+     * @param $subject
+     * @return string
+     */
+    public static function ip($subject): string
+    {
+        return static::ipv4($subject);
+    }
+
+    /**
+     * Filter to only IPv4 format.
+     *
+     * @param $subject
+     * @return string
+     */
+    public static function ipv4($subject): string
+    {
+        $subject = static::digits($subject);
+
+        $pattern = str_repeat('(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]|[0|1])', 4);
+
+        return static::glue($subject, $pattern, '.');
+    }
+
+    /**
+     * Filter to only IPv6 format.
+     *
+     * @param $subject
+     * @return string
+     */
+    public static function ipv6($subject): string
+    {
+        $subject = str_replace(' ', '', static::alphanumeric($subject));
+
+        $count = floor(strlen($subject) / 4);
+
+        $pattern = str_repeat('([0-9a-fA-F]{1,4})', $count);
+
+        preg_match(self::wrapMatchPattern($pattern, false, '/', '/'), $subject, $matches);
+
+        // Get rid of full subject.
+        array_shift($matches);
+
+        $prefix = null;
+
+        if ($count < 8) {
+            $prefix = implode('::', array_slice($matches, 0, 2));
+            $matches = array_slice($matches, 2);
+        }
+
+        $matches = implode(':', $matches);
+
+        return implode(':', array_filter([$prefix, $matches]));
+    }
+
+    /**
      * @param $subject
      * @param $pattern
      * @param  string  $replace
+     * @param  string  $prefix
+     * @param  string  $suffix
      * @return array|string|string[]|null
      */
-    public static function replace($subject, $pattern, string $replace = '', $prefix = '/[^', $suffix = ']+/u')
+    public static function replace($subject, $pattern, string $replace = '', string $prefix = '/[^', string $suffix = ']+/u')
     {
         return preg_replace(self::wrapReplacePattern($pattern, $prefix, $suffix), $replace, $subject);
     }
@@ -170,12 +228,47 @@ class Regex
     }
 
     /**
+     * Check if it's an IPv4 address.
+     *
+     * @param $subject
+     * @return bool
+     */
+    public static function isIp($subject): bool
+    {
+        return static::isIpv4($subject);
+    }
+
+    /**
+     * Check if it's an IPv4 address.
+     *
+     * @param $subject
+     * @return bool
+     */
+    public static function isIpv4($subject): bool
+    {
+        return static::match($subject, '/^((2[0-4]|1\d|[1-9])?\d|25[0-5])(\.(?1)){3}\z/', false, '', '');
+    }
+
+    /**
+     * Check if it's an IPv6 address.
+     *
+     * @param $subject
+     * @return bool
+     */
+    public static function isIpv6($subject): bool
+    {
+        return static::match($subject, '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|((2[0-4]|1\d|[1-9])?\d|25[0-5])(\.(?7)){3})\z/i', false, '', '');
+    }
+
+    /**
      * @param $subject
      * @param $pattern
      * @param  bool  $allowWhitespace
+     * @param  string  $prefix
+     * @param  string  $suffix
      * @return bool
      */
-    public static function match($subject, $pattern, bool $allowWhitespace = false, $prefix = '/^[', $suffix = ']+$/u'): bool
+    public static function match($subject, $pattern, bool $allowWhitespace = false, string $prefix = '/^[', string $suffix = ']+$/u'): bool
     {
         $result = preg_match(self::wrapMatchPattern($pattern, $allowWhitespace, $prefix, $suffix), $subject);
 
@@ -183,9 +276,29 @@ class Regex
     }
 
     /**
+     * @param $subject
+     * @param $pattern
+     * @param  string  $glue
+     * @param  bool  $allowWhitespace
+     * @param  string  $prefix
+     * @param  string  $suffix
+     * @return string
+     */
+    public static function glue($subject, $pattern, string $glue = '', bool $allowWhitespace = false, string $prefix = '/', string $suffix = '/'): string
+    {
+        preg_match(self::wrapMatchPattern($pattern, $allowWhitespace, $prefix, $suffix), $subject, $matches);
+
+        array_shift($matches);
+
+        return implode($glue, $matches);
+    }
+
+    /**
      * Wrap a replace pattern with boundaries.
      *
      * @param $pattern
+     * @param $prefix
+     * @param $suffix
      * @return string
      */
     protected static function wrapReplacePattern($pattern, $prefix, $suffix): string
@@ -198,6 +311,8 @@ class Regex
      *
      * @param $pattern
      * @param  bool  $allowWhitespace
+     * @param $prefix
+     * @param $suffix
      * @return string
      */
     protected static function wrapMatchPattern($pattern, bool $allowWhitespace, $prefix, $suffix): string
