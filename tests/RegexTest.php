@@ -3,12 +3,11 @@
 namespace Tests;
 
 use Hotmeteor\Regex\Regex;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RegexTest extends TestCase
 {
-    /**
-     * @dataProvider providesReplacementSubjects
-     */
+    #[DataProvider('providesReplacementSubjects')]
     public function test_replacements(
         $method,
         $expected
@@ -18,7 +17,7 @@ class RegexTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function providesReplacementSubjects()
+    public static function providesReplacementSubjects()
     {
         return [
 
@@ -104,9 +103,7 @@ class RegexTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider providesMatchSubjects
-     */
+    #[DataProvider('providesMatchSubjects')]
     public function test_matches(
         $method,
         $subject,
@@ -118,7 +115,7 @@ class RegexTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function providesMatchSubjects()
+    public static function providesMatchSubjects()
     {
         $allowWhitespace = true;
         $disallowWhitespace = false;
